@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["sia.s.saj@gmail.com"]
   spec.summary       = "rspec-cli-#{Rspec::Cli::VERSION}"
   spec.description   = "A set of tools to test programs on the command line"
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/quazimodo/rspec-cli"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
