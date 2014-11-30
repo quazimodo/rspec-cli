@@ -1,6 +1,6 @@
 # Rspec::Cli
 
-TODO: Write a gem description
+This is an extension to rspec to fascilitate cli testing.
 
 ## Installation
 
@@ -20,7 +20,23 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In your rspec config
+
+```ruby
+RSpec.configure do |config|
+  config.include RSpec::Cli, type: :feature
+end
+```
+or similar.
+
+Now your feature specs will have helper methods
+```new_cli_process(%w[echo hi there :D])``` and ```spawn_cli_process(%w[echo hi there :D])```
+
+The first one returns a CliProcess instance that hasn't spawned your command yet.
+
+The second one returns a CliProcess instance that has spawned your command.
+
+The CliProcess instance has some useful methads like ```#read``` to read from it's stdout, ```#write(string)``` to write to it's stdin and ```#status``` to get the process's status.
 
 ## Contributing
 

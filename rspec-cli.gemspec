@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Rspec::Cli::VERSION
   spec.authors       = ["Sia. S."]
   spec.email         = ["sia.s.saj@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = "rspec-cli-#{Rspec::Cli::VERSION}"
+  spec.description   = "A set of tools to test programs on the command line"
+  spec.homepage      = "https://github.com/quazimodo/rspec-cli"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -20,4 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rspec", "~> 3.1"
+
 end
