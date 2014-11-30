@@ -1,7 +1,7 @@
 require "rspec/cli/version"
 require "rspec/cli/cli_process"
 
-module Rspec
+module RSpec
 
   module Cli
 

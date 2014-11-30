@@ -5,10 +5,10 @@ require 'rspec/cli/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rspec-cli"
-  spec.version       = Rspec::Cli::VERSION
+  spec.version       = RSpec::Cli::VERSION
   spec.authors       = ["Sia. S."]
   spec.email         = ["sia.s.saj@gmail.com"]
-  spec.summary       = "rspec-cli-#{Rspec::Cli::VERSION}"
+  spec.summary       = "rspec-cli-#{RSpec::Cli::VERSION}"
   spec.description   = "A set of tools to test programs on the command line"
   spec.homepage      = "https://github.com/quazimodo/rspec-cli"
   spec.license       = "MIT"

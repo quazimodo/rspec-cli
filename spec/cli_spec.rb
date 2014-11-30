@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'rspec/cli'
 
-describe Rspec::Cli do
+describe RSpec::Cli do
 
-  let(:subject) { Object.new.extend Rspec::Cli }
+  let(:subject) { Object.new.extend RSpec::Cli }
 
   describe "::new_cli_process" do
 

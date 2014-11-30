@@ -1,6 +1,6 @@
 require 'pty'
 
-module Rspec
+module RSpec
 
   module Cli
 
