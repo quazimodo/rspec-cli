@@ -9,16 +9,13 @@ module Rspec
     class CliProcess
       TERMINAL_COLOURS = /\e\[(\d+)(;\d+)*m/
 
-      attr_reader :pid
+      attr_reader :pid, :kill_signal
 
       def initialize(*args)
         raise ArgumentError, "wrong number of arguments" if args.empty?
         args.unshift(*args.shift) if Array === args.first
 
         @command = args
-        @out = ''
-        @err = ''
-        @in = ''
       end
 
       def read(len = 100)
@@ -48,6 +45,7 @@ module Rspec
 
       def run!
         # Create master and slave pseudo terminal devices
+
         @master, @slave = PTY.open
         # Create a unix pipe with read/write file descriptors
         @out, @in = IO.pipe
@@ -70,11 +68,24 @@ module Rspec
         PTY.check(@pid)
       end
 
-      def kill(signal = "SIGTERM")
+      def alive?
+        begin
+          return status.nil?
+        rescue
+          return false
+        end
+      end
+
+      def dying?
+        @kill_signal != nil && alive?
+      end
+
+      def kill(signal = "TERM")
         raise "Process hasn't spawned yet" if @pid.nil?
         @in.close
         @master.close
         Process.kill(signal, @pid)
+        @kill_signal = signal
       end
     end
   end

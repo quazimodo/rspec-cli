@@ -10,7 +10,6 @@ describe Rspec::Cli::CliProcess do
     expect{Rspec::Cli::CliProcess.new %w[echo who are you] }.not_to raise_error
   end
 
-
   it "initializes without actually spawning any process" do
     expect(PTY).not_to receive(:spawn)
     p = Rspec::Cli::CliProcess.new %w[echo who are you]
@@ -18,8 +17,6 @@ describe Rspec::Cli::CliProcess do
   end
 
   describe "#run!" do
-
-    after(:each) {subject.kill}
 
     it "spawns the process" do
       expect(PTY).to receive(:spawn).and_call_original
@@ -127,8 +124,35 @@ describe Rspec::Cli::CliProcess do
   end
 
   describe "#kill" do
+    let(:subject) { Rspec::Cli::CliProcess.new(%w[factor]).run! }
 
+    it "closes all remaining streams" do
+      in_stream = subject.instance_variable_get(:@in)
+      pty = subject.instance_variable_get(:@master)
 
+      expect(pty).to receive(:close)
+      expect(in_stream).to receive(:close)
 
+      subject.kill
+    end
+
+    it "raises an error if the process hasn't spawned" do
+      subject = Rspec::Cli::CliProcess.new(%w[factor])
+      expect{subject.read}.to raise_error
+    end
+
+    it "terminates the process using SIGTERM" do
+      pid = subject.pid
+      expect(Process).to receive(:kill).with("TERM", pid).and_call_original
+      subject.kill
+      expect(subject.dying?).to be true
+    end
+
+    it "terminates the process using given signal" do
+      pid = subject.pid
+      expect(Process).to receive(:kill).with("KILL", pid).and_call_original
+      subject.kill("KILL")
+      expect(subject.dying?).to be true
+    end
   end
 end
