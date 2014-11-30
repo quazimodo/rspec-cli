@@ -1,6 +1,7 @@
 require 'pty'
-require 'pry'
+
 module Rspec
+
   module Cli
 
     ##
