@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'rspec/cli/cli_process'
-require 'pry'
 
 describe Rspec::Cli::CliProcess do
 
