@@ -67,12 +67,7 @@ module Rspec
 
       def status
         raise "process hasn't spawned yet" if @pid.nil?
-        status = PTY.check(@pid)
-        if status.nil?
-          return :alive
-        else
-          return status.to_s
-        end
+        PTY.check(@pid)
       end
 
       def kill(signal = "SIGTERM")

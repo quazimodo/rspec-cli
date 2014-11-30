@@ -32,13 +32,15 @@ describe Rspec::Cli::CliProcess do
     end
 
     it "assigns the new process's stdout to a tty by default" do
+      allow_any_instance_of(File).to receive(:close)
       subject.run!
-      expect(subject.instance_variable_get(:@slave).class).to eq File
+      expect(subject.instance_variable_get(:@slave).isatty).to be true
     end
 
     it "assigns the new process's stdin to a pipe endpoint by default" do
+      allow_any_instance_of(IO).to receive(:close)
       subject.run!
-      expect(subject.instance_variable_get(:@out).class).to eq IO
+      expect(FileTest.pipe? subject.instance_variable_get(:@out)).to be true
     end
 
   end
@@ -50,17 +52,17 @@ describe Rspec::Cli::CliProcess do
       expect{subject.status}.to raise_error "process hasn't spawned yet"
     end
 
-    it "returns :alive if the process is still alive" do
+    it "returns nil if the process is still alive" do
       subject = Rspec::Cli::CliProcess.new(%w[factor]).run!
-      expect(subject.status).to eq :alive
+      expect(subject.status).to eq nil
       subject.kill
     end
 
-    it "returns a string describing the exit status of the process if it's dead" do
+    it "returns a Process::Status object if the process has spawned and terminated" do
       subject = Rspec::Cli::CliProcess.new(%w[factor]).run!
       subject.kill
       sleep 0.1
-      expect(subject.status).to include "SIGTERM"
+      expect(subject.status).to be_a_kind_of Process::Status
     end
 
   end
@@ -124,4 +126,9 @@ describe Rspec::Cli::CliProcess do
 
   end
 
+  describe "#kill" do
+
+
+
+  end
 end
