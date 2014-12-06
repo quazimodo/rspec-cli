@@ -1,4 +1,4 @@
-# Rspec::Cli
+# RSpec::Cli
 
 This is an extension to rspec to fascilitate cli testing.
 
@@ -25,6 +25,9 @@ In your rspec config
 ```ruby
 RSpec.configure do |config|
   config.include RSpec::Cli, type: :feature
+
+  config.alias_example_group_to :feature, :type => :feature
+  config.alias_example_to :scenario
 end
 ```
 or similar.
