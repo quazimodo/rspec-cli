@@ -1,4 +1,5 @@
 require 'pty'
+require 'rspec/cli/i_o_decorator'
 
 module RSpec
 
@@ -8,86 +9,101 @@ module RSpec
     # This class spawns your process and provides some
     # helpers to interact with the process
     class CliProcess
+
       TERMINAL_COLOURS = /\e\[(\d+)(;\d+)*m/
 
-      attr_reader :pid, :kill_signal
+      attr_reader :pid
 
       def initialize(*args)
         raise ArgumentError, "wrong number of arguments" if args.empty?
         args.unshift(*args.shift) if Array === args.first
-
         @command = args
       end
 
-      def read(len = 100)
-        raise "process hasn't spawned yet" if @pid.nil?
-        # read from @master (master part of pseudo terminal) where program output is going
-        out = ""
-        begin
-          loop do
-            # Arbitraty choice of 100 bytes. Not sure if this is good/bad
-            out << @master.read_nonblock(len)
-          end
-        rescue
-          if out.empty?
-            return nil
-          else
-            return out.gsub(TERMINAL_COLOURS, '')
-          end
-        end
+      def flush
+        assert_spawned
+        @master.flush
+      end
 
+      def read_all(*args)
+        assert_spawned
+        @master.flush
+        @master.read_all args
+      end
+
+      def gets
+        assert_spawned
+        @master.gets
+      end
+
+      def puts(*args)
+        assert_spawned
+        @master.puts args
+        @master.flush
+      end
+
+      def stdout
+        @master
+      end
+
+      def stdin
+        @slave
       end
 
       def write(arg)
-        raise "process hasn't spawned yet" if @pid.nil?
-        # Writing to a pipe stdin so our ptm doesn't fill with buffered input
-        @in.puts arg
+        # This method can block if the argument is huge
+        assert_spawned
+        @master.write "#{arg}\n"
+        @master.flush
       end
 
       def run!
         # Create master and slave pseudo terminal devices
+        master_tty, slave_tty = PTY.open
+        @master =  IODecorator.new master_tty
+        @slave = slave_tty
 
-        @master, @slave = PTY.open
-        # Create a unix pipe with read/write file descriptors
-        @out, @in = IO.pipe
-        # spawn our process and set the process's input to be the
-        # read endpoint of the pipe
-        # set it's output to be the slave pseudo device
-        r, w, @pid = PTY.spawn(*@command, in: @out, out: @slave)
-        # close the read file descriptor for the pipe in this process,
-        # our spawned process will still have this as their stdout
-        @out.close
-        # close the connection to the slave pseudo device. The spawned
-        # process will still be connected to this
+        @pid =  PTY.spawn(*@command, in: @slave, out: @slave, err: @slave)[2]
+
         @slave.close
 
         self
+
       end
 
       def status
-        raise "process hasn't spawned yet" if @pid.nil?
+
+        assert_spawned
         PTY.check(@pid)
+
       end
 
       def alive?
+
         begin
           return status.nil?
         rescue
           return false
         end
+
       end
 
-      def dying?
-        @kill_signal != nil && alive?
-      end
+      def kill!(signal = "TERM")
 
-      def kill(signal = "TERM")
-        raise "Process hasn't spawned yet" if @pid.nil?
-        @in.close
+        assert_spawned
         @master.close
         Process.kill(signal, @pid)
-        @kill_signal = signal
+
       end
+
+      private
+
+      def assert_spawned
+        raise "process hasn't spawned yet" if @pid.nil?
+      end
+
     end
+
   end
+
 end
