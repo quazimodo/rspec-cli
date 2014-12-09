@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require 'optparse'
+
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Dummy executable to help test rspec-cli"
+
+  opts.on("-l", "--looper", "start in read/print loop mode") do
+    options[:looper] = true
+  end
+
+  opts.on("-e str", "--echo str", "echo str arg") do |echo|
+    options[:echo] = echo
+  end
+
+  opts.on("-s seconds", "--sleeper seconds", "echo str arg") do |seconds|
+    options[:sleeper] = seconds
+  end
+end.parse!
+
+puts "Dummy has loaded"
+
+if options[:looper]
+
+  loop do
+    i = gets
+    sleep(options[:sleeper].to_f) unless options[:sleeper].nil?
+    puts i
+  end
+
+elsif options[:echo]
+
+  puts options[:echo]
+
+end
+
+
+exit 0
