@@ -46,10 +46,10 @@ describe RSpec::Cli::IODecorator do
 
         master = RSpec::Cli::IODecorator.new master_tty
 
-        command = %w[spec/support/bin/dummy --looper --sleeper 0.1]
+        command = "spec/support/bin/dummy --looper --sleeper 0.1"
         @pid =  PTY.spawn(command, in: slave_tty, out: slave_tty, err: slave_tty)[2]
 
-        master.puts "hi there"
+        master.write "hi there"
         expect(master.read_all).to include "hi there"
       end
     end
