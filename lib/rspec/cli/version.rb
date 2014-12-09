@@ -1,5 +1,5 @@
 module RSpec
   module Cli
-    VERSION = "1.0.2"
+    VERSION = "0.2.0"
   end
 end
