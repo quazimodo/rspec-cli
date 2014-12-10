@@ -28,7 +28,7 @@ module RSpec
       def read_all(*args)
         assert_spawned
         @master.flush
-        @master.read_all args
+        @master.ready_all *args
       end
 
       def gets

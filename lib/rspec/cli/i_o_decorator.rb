@@ -11,8 +11,10 @@ module RSpec
         IO.select([self], nil, nil, timeout) ? true : false
       end
 
-      def read_all nonblocking = false
-        return nil if nonblocking and not has_data?
+      def ready_all nonblocking = false
+        if nonblocking && !has_data?
+          return nil
+        end
 
         # Block until data has arrived.
         data = readpartial 0xFFFF
