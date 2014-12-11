@@ -36,9 +36,9 @@ describe RSpec::Cli::IODecorator do
       end
 
       it "returns all the data if there is data" do
-        io_in.puts "hi, this"
-        io_in.puts "is test data"
-       expect(io_out.read_all(nonblocking: true)).to include "hi, this\nis test data"
+        io_in.write "hi, this"
+        io_in.write " is test data"
+       expect(io_out.read_all(nonblocking: true)).to eq "hi, this is test data"
       end
 
       it "doesn't fall into a race condition with another process interacting with it" do
@@ -50,7 +50,7 @@ describe RSpec::Cli::IODecorator do
         @pid =  PTY.spawn(command, in: slave_tty, out: slave_tty, err: slave_tty)[2]
 
         master.write "hi there"
-        expect(master.read_all).to include "hi there"
+        expect(master.read_all).to eq "hi there"
       end
     end
 
@@ -80,7 +80,7 @@ describe RSpec::Cli::IODecorator do
        # while the system waits for the buffer to be read from,
        # so we do the write in a new thread.
        Thread.new do
-         io_in.syswrite huge_string
+         io_in.write huge_string
        end
 
        expect(test).to change{data}.to huge_string

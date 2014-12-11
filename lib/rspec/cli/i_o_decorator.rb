@@ -1,5 +1,6 @@
 require 'pty'
 require 'delegate'
+require 'timeout'
 
 module RSpec
 
@@ -11,7 +12,10 @@ module RSpec
         IO.select([self], nil, nil, timeout) ? true : false
       end
 
-      def ready_all nonblocking = false
+      # This fails on huge data blocks. the has_data? thing migth be
+      # returning false when the system is about to refill the stream
+      # with more data. Essentially a race condition
+      def read_all nonblocking = false
         if nonblocking && !has_data?
           return nil
         end
