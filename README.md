@@ -39,7 +39,10 @@ The first one returns a CliProcess instance that hasn't spawned your command yet
 
 The second one returns a CliProcess instance that has spawned your command.
 
-The CliProcess instance has some useful methads like ```#read``` to read from it's stdout, ```#write(string)``` to write to it's stdin and ```#status``` to get the process's status.
+The CliProcess instance has some useful methods like ```#read_all``` to read from it's stdout, ```#write(string)``` to write to it's stdin and ```#status``` to get the process's status.
+
+## Versioning
+As close to semantic versioning as I can be sure of (earlier in the project I broke semantic versioning, but everything past tag 0.2.0 is correct)
 
 ## Contributing
 
